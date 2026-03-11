@@ -1,0 +1,11 @@
+{
+  "name": "@kortex/shell",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite --port 3000",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --port 3000",
+    "lint": "eslint ."
+  }
+}

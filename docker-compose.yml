@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+  shell:
+    build: ./apps/shell
+    ports:
+      - "3000:3000"
+  content-mfe:
+    build: ./apps/content-mfe
+    ports:
+      - "3001:3001"
+  rag-mfe:
+    build: ./apps/rag-mfe
+    ports:
+      - "3002:3002"
+  rag-service:
+    build: ./services/rag-service
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
