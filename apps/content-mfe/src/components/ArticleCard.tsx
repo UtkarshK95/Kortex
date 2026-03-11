@@ -1,7 +1,7 @@
-import { Article } from '../data/articles'
+import { SanityArticle } from '../types/sanity'
 
 interface ArticleCardProps {
-  article: Article
+  article: SanityArticle
   onSelect: (slug: string) => void
 }
 
@@ -12,19 +12,22 @@ const categoryColors: Record<string, string> = {
     'bg-purple-500/10 text-purple-400 border-purple-500/20',
   'ai-data':
     'bg-green-500/10 text-green-400 border-green-500/20',
+  'enterprise-architecture':
+    'bg-orange-500/10 text-orange-400 border-orange-500/20',
 }
 
 export default function ArticleCard({
   article,
   onSelect,
 }: ArticleCardProps) {
+  const categorySlug = article.category?.slug?.current ?? ''
   const colorClass =
-    categoryColors[article.category] ||
+    categoryColors[categorySlug] ||
     'bg-gray-500/10 text-gray-400 border-gray-500/20'
 
   return (
     <article
-      onClick={() => onSelect(article.slug)}
+      onClick={() => onSelect(article.slug.current)}
       className="bg-gray-900 border border-gray-800 rounded-xl
                  p-6 hover:border-indigo-500/50 transition-all
                  duration-200 cursor-pointer group h-full
@@ -35,7 +38,7 @@ export default function ArticleCard({
           className={`text-xs px-2.5 py-1 rounded-full
                      border font-medium ${colorClass}`}
         >
-          {article.category.replace(/-/g, ' ')}
+          {article.category?.name ?? 'Uncategorized'}
         </span>
         <span className="text-gray-500 text-xs">
           {article.readTime} min read
@@ -67,7 +70,7 @@ export default function ArticleCard({
                        flex items-center justify-center"
           >
             <span className="text-white text-xs">
-              {article.author.charAt(0)}
+              {article.author?.charAt(0) ?? '?'}
             </span>
           </div>
           <span className="text-gray-400 text-xs">

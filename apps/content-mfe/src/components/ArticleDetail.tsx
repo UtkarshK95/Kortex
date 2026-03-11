@@ -1,7 +1,8 @@
-import { Article } from '../data/articles'
+import { SanityArticle } from '../types/sanity'
+import { blockToText } from '../lib/blockToText'
 
 interface ArticleDetailProps {
-  article: Article
+  article: SanityArticle
   onBack: () => void
 }
 
@@ -9,6 +10,8 @@ export default function ArticleDetail({
   article,
   onBack,
 }: ArticleDetailProps) {
+  const bodyText = blockToText(article.body)
+
   return (
     <article className="max-w-3xl mx-auto">
       <button
@@ -39,7 +42,7 @@ export default function ArticleDetail({
                        bg-indigo-500/10 text-indigo-400
                        border border-indigo-500/20 font-medium"
           >
-            {article.category.replace(/-/g, ' ')}
+            {article.category?.name ?? 'Uncategorized'}
           </span>
           <span className="text-gray-500 text-xs">
             {article.readTime} min read
@@ -53,9 +56,7 @@ export default function ArticleDetail({
           {article.title}
         </h1>
 
-        <p
-          className="text-gray-400 text-lg leading-relaxed mb-6"
-        >
+        <p className="text-gray-400 text-lg leading-relaxed mb-6">
           {article.excerpt}
         </p>
 
@@ -69,7 +70,7 @@ export default function ArticleDetail({
                          flex items-center justify-center"
             >
               <span className="text-white text-sm">
-                {article.author.charAt(0)}
+                {article.author?.charAt(0) ?? '?'}
               </span>
             </div>
             <div>
@@ -91,21 +92,23 @@ export default function ArticleDetail({
         </div>
       </header>
 
-      <div className="flex flex-wrap gap-2 mb-8">
-        {article.tags.map((tag) => (
-          <span
-            key={tag}
-            className="text-xs px-2.5 py-1 rounded-full
-                       bg-gray-800 text-gray-400 border
-                       border-gray-700"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
+      {article.tags && article.tags.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-8">
+          {article.tags.map((tag) => (
+            <span
+              key={tag}
+              className="text-xs px-2.5 py-1 rounded-full
+                         bg-gray-800 text-gray-400 border
+                         border-gray-700"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
 
       <div className="space-y-4">
-        {article.body.split('\n\n').map((paragraph, index) => (
+        {bodyText.split('\n\n').map((paragraph, index) => (
           <p
             key={index}
             className="text-gray-300 leading-relaxed"
