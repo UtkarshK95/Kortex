@@ -8,21 +8,11 @@ export default defineConfig({
     react(),
     tailwindcss(),
     federation({
-      name: 'shell',
+      name: 'ragMfe',
+      filename: 'remoteEntry.js',
       dts: false,
-      remotes: {
-        contentMfe: {
-          type: 'module',
-          name: 'contentMfe',
-          entry: 'http://localhost:3001/remoteEntry.js',
-          shareScope: 'default',
-        },
-        ragMfe: {
-          type: 'module',
-          name: 'ragMfe',
-          entry: 'http://localhost:3002/remoteEntry.js',
-          shareScope: 'default',
-        },
+      exposes: {
+        './App': './src/App',
       },
       shared: {
         react: {
@@ -42,5 +32,13 @@ export default defineConfig({
   ],
   build: {
     target: 'esnext',
+  },
+  server: {
+    port: 3002,
+    cors: true,
+  },
+  preview: {
+    port: 3002,
+    cors: true,
   },
 })

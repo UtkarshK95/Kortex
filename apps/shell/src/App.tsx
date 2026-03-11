@@ -10,7 +10,7 @@ export default function App() {
   const { sidebarOpen } = useKortexStore()
 
   return (
-    <BrowserRouter>
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <div className="min-h-screen bg-gray-950 text-white">
         <Navbar />
         <Sidebar />
