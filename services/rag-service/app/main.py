@@ -1,0 +1,156 @@
+import hashlib
+import hmac
+import json
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from sse_starlette.sse import EventSourceResponse
+
+from .config import settings
+from .rag_pipeline import query_rag, stream_rag
+from .sanity_client import article_to_text, fetch_articles
+from .vector_store import ensure_collection, ingest_article
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("Kortex RAG Service starting...")
+    ensure_collection()
+    print("Qdrant collection ready.")
+    yield
+    print("Kortex RAG Service shutting down.")
+
+
+app = FastAPI(
+    title="Kortex RAG Service",
+    description="RAG pipeline for Kortex Knowledge Portal",
+    version="1.0.0",
+    lifespan=lifespan,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.ALLOWED_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+# ── Models ────────────────────────────────────────────────────────────────────
+
+class QueryRequest(BaseModel):
+    question: str
+    top_k: int = 5
+    stream: bool = False
+
+
+class IngestResponse(BaseModel):
+    success: bool
+    articles_ingested: int
+    total_chunks: int
+    message: str
+
+
+# ── Health ────────────────────────────────────────────────────────────────────
+
+@app.get("/health")
+async def health():
+    return {"status": "ok", "service": "kortex-rag", "version": "1.0.0"}
+
+
+# ── Ingestion ─────────────────────────────────────────────────────────────────
+
+@app.post("/ingest", response_model=IngestResponse)
+async def ingest():
+    """Fetch all articles from Sanity and ingest into Qdrant."""
+    try:
+        articles = fetch_articles()
+        if not articles:
+            return IngestResponse(
+                success=True,
+                articles_ingested=0,
+                total_chunks=0,
+                message="No articles found in Sanity CMS",
+            )
+
+        total_chunks = 0
+        for article in articles:
+            text = article_to_text(article)
+            if text.strip():
+                total_chunks += ingest_article(article, text)
+
+        return IngestResponse(
+            success=True,
+            articles_ingested=len(articles),
+            total_chunks=total_chunks,
+            message=f"Successfully ingested {len(articles)} articles ({total_chunks} chunks)",
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Ingestion failed: {str(e)}")
+
+
+# ── Webhook ───────────────────────────────────────────────────────────────────
+
+@app.post("/webhook/sanity")
+async def sanity_webhook(request: Request):
+    """Sanity webhook — triggers re-ingestion on publish."""
+    body = await request.body()
+    signature = request.headers.get("sanity-webhook-signature")
+
+    if settings.WEBHOOK_SECRET and signature:
+        expected = hmac.new(
+            settings.WEBHOOK_SECRET.encode(),
+            body,
+            hashlib.sha256,
+        ).hexdigest()
+        if not hmac.compare_digest(f"sha256={expected}", signature):
+            raise HTTPException(status_code=401, detail="Invalid webhook signature")
+
+    articles = fetch_articles()
+    total_chunks = 0
+    for article in articles:
+        text = article_to_text(article)
+        if text.strip():
+            total_chunks += ingest_article(article, text)
+
+    return {
+        "success": True,
+        "message": f"Re-ingested {len(articles)} articles, {total_chunks} chunks",
+    }
+
+
+# ── Query ─────────────────────────────────────────────────────────────────────
+
+@app.post("/query")
+async def query(request: QueryRequest):
+    """Non-streaming RAG query endpoint."""
+    if not request.question.strip():
+        raise HTTPException(status_code=400, detail="Question cannot be empty")
+    try:
+        return query_rag(request.question, top_k=request.top_k)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Query failed: {str(e)}")
+
+
+@app.post("/query/stream")
+async def query_stream(request: QueryRequest):
+    """Streaming RAG query endpoint via SSE."""
+    if not request.question.strip():
+        raise HTTPException(status_code=400, detail="Question cannot be empty")
+
+    async def generate():
+        sources_sent = False
+        try:
+            for text_chunk, sources in stream_rag(request.question, top_k=request.top_k):
+                yield {"event": "chunk", "data": json.dumps({"text": text_chunk})}
+                if not sources_sent:
+                    yield {"event": "sources", "data": json.dumps({"sources": sources})}
+                    sources_sent = True
+            yield {"event": "done", "data": json.dumps({"status": "complete"})}
+        except Exception as e:
+            yield {"event": "error", "data": json.dumps({"error": str(e)})}
+
+    return EventSourceResponse(generate())
