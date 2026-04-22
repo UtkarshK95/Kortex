@@ -10,6 +10,10 @@ class Settings:
     GEMINI_EMBEDDING_MODEL: str = "models/gemini-embedding-001"
     GEMINI_LLM_MODEL: str = "gemini-2.5-flash"
 
+    # Groq
+    GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
+    GROQ_MODEL: str = "llama-3.3-70b-versatile"
+
     # Qdrant
     QDRANT_URL: str = os.getenv("QDRANT_URL", "")
     QDRANT_API_KEY: str = os.getenv("QDRANT_API_KEY", "")

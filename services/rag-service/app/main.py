@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from sse_starlette.sse import EventSourceResponse
 
 from .config import settings
-from .rag_pipeline import query_rag, stream_rag
+from .rag_pipeline import query_rag, stream_rag, stream_rag_groq
 from .sanity_client import article_to_text, fetch_articles
 from .vector_store import ensure_collection, ingest_article
 
@@ -45,6 +45,7 @@ class QueryRequest(BaseModel):
     question: str
     top_k: int = 5
     stream: bool = False
+    provider: str = "gemini"  # "gemini" or "groq"
 
 
 class IngestResponse(BaseModel):
@@ -206,13 +207,31 @@ async def query_stream(request: QueryRequest):
     async def generate():
         sources_sent = False
         try:
-            for text_chunk, sources in stream_rag(request.question, top_k=request.top_k):
-                yield {"event": "chunk", "data": json.dumps({"text": text_chunk})}
+            if request.provider == "groq":
+                pipeline = stream_rag_groq(request.question, top_k=request.top_k)
+            else:
+                pipeline = stream_rag(request.question, top_k=request.top_k)
+
+            for text_chunk, sources in pipeline:
+                yield {
+                    "event": "chunk",
+                    "data": json.dumps({"text": text_chunk}),
+                }
                 if not sources_sent:
-                    yield {"event": "sources", "data": json.dumps({"sources": sources})}
+                    yield {
+                        "event": "sources",
+                        "data": json.dumps({"sources": sources}),
+                    }
                     sources_sent = True
-            yield {"event": "done", "data": json.dumps({"status": "complete"})}
+
+            yield {
+                "event": "done",
+                "data": json.dumps({"status": "complete"}),
+            }
         except Exception as e:
-            yield {"event": "error", "data": json.dumps({"error": str(e)})}
+            yield {
+                "event": "error",
+                "data": json.dumps({"error": str(e)}),
+            }
 
     return EventSourceResponse(generate())

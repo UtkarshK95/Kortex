@@ -6,6 +6,7 @@ const RAG_SERVICE_URL = import.meta.env.VITE_RAG_SERVICE_URL ?? 'http://localhos
 export function useRAGQuery() {
   const [messages, setMessages] = useState<Message[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [provider, setProvider] = useState<'gemini' | 'groq'>('gemini')
 
   const sendQuery = useCallback(
     async (question: string) => {
@@ -37,7 +38,7 @@ export function useRAGQuery() {
             'Content-Type': 'application/json',
             Accept: 'text/event-stream',
           },
-          body: JSON.stringify({ question, top_k: 5, stream: true }),
+          body: JSON.stringify({ question, top_k: 5, stream: true, provider }),
         })
 
         if (!response.ok) {
@@ -132,10 +133,10 @@ export function useRAGQuery() {
         setIsLoading(false)
       }
     },
-    [isLoading]
+    [isLoading, provider]
   )
 
   const clearMessages = useCallback(() => setMessages([]), [])
 
-  return { messages, isLoading, sendQuery, clearMessages }
+  return { messages, isLoading, sendQuery, clearMessages, provider, setProvider }
 }

@@ -1,4 +1,5 @@
 import google.generativeai as genai
+from groq import Groq
 
 from .config import settings
 from .vector_store import search_similar
@@ -97,3 +98,29 @@ def stream_rag(question: str, top_k: int = 5):
     for chunk in response:
         if chunk.text:
             yield chunk.text, sources
+
+
+def stream_rag_groq(question: str, top_k: int = 5):
+    """Streaming RAG pipeline using Groq / Llama 3.3."""
+    chunks = search_similar(question, top_k=top_k)
+    context = build_context(chunks)
+    sources = get_sources(chunks)
+
+    client = Groq(api_key=settings.GROQ_API_KEY)
+
+    stream = client.chat.completions.create(
+        model=settings.GROQ_MODEL,
+        messages=[
+            {
+                "role": "system",
+                "content": RAG_SYSTEM_PROMPT.format(context=context),
+            },
+            {"role": "user", "content": question},
+        ],
+        stream=True,
+    )
+
+    for chunk in stream:
+        delta = chunk.choices[0].delta
+        if delta.content:
+            yield delta.content, sources
