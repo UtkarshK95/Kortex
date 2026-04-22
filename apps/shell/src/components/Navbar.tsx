@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
+import { Show, SignInButton, UserButton } from '@clerk/react'
 import { useKortexStore } from '../store/useKortexStore'
 
 const navLinks = [
@@ -7,7 +8,7 @@ const navLinks = [
 ]
 
 export default function Navbar() {
-  const { toggleSidebar, isAuthenticated, user } = useKortexStore()
+  const { toggleSidebar } = useKortexStore()
   const location = useLocation()
 
   return (
@@ -59,35 +60,27 @@ export default function Navbar() {
 
       {/* Right */}
       <div className="flex items-center gap-3">
-        {isAuthenticated ? (
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-indigo-600
-                            flex items-center justify-center">
-              <span className="text-white text-xs font-medium">
-                {user?.name?.charAt(0).toUpperCase()}
-              </span>
-            </div>
-            <span className="text-gray-300 text-sm hidden sm:block">
-              {user?.name}
-            </span>
-          </div>
-        ) : (
-          <button
-            onClick={() =>
-              useKortexStore.getState().setUser({
-                id: '1',
-                name: 'Utkarsh Katiyar',
-                email: 'utkarsh@kortex.dev',
-                role: 'admin',
-              })
-            }
-            className="bg-indigo-600 hover:bg-indigo-700
-                       text-white text-sm px-4 py-2 rounded-lg
-                       transition-colors"
-          >
-            Sign In
-          </button>
-        )}
+        <Show when="signed-out">
+          <SignInButton mode="modal">
+            <button
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700
+                         text-white text-sm font-medium rounded-lg
+                         transition-colors"
+            >
+              Sign In
+            </button>
+          </SignInButton>
+        </Show>
+
+        <Show when="signed-in">
+          <UserButton
+            appearance={{
+              elements: {
+                avatarBox: 'w-8 h-8',
+              },
+            }}
+          />
+        </Show>
       </div>
     </nav>
   )
