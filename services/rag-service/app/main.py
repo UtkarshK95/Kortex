@@ -54,6 +54,20 @@ class IngestResponse(BaseModel):
     message: str
 
 
+class DocumentIngestRequest(BaseModel):
+    title: str
+    content: str
+    category: str = "User Upload"
+    author: str = "Manual Upload"
+    source: str = "dynamic"
+
+
+class DocumentIngestResponse(BaseModel):
+    success: bool
+    chunks_stored: int
+    message: str
+
+
 # ── Health ────────────────────────────────────────────────────────────────────
 
 @app.get("/health")
@@ -87,6 +101,54 @@ async def ingest():
             articles_ingested=len(articles),
             total_chunks=total_chunks,
             message=f"Successfully ingested {len(articles)} articles ({total_chunks} chunks)",
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Ingestion failed: {str(e)}")
+
+
+@app.post("/ingest/document", response_model=DocumentIngestResponse)
+async def ingest_document(request: DocumentIngestRequest):
+    """
+    Ingest a single document directly from text content.
+    Content is immediately chunked, embedded, and stored
+    in Qdrant — queryable right away.
+    """
+    if not request.content.strip():
+        raise HTTPException(status_code=400, detail="Content cannot be empty")
+    if not request.title.strip():
+        raise HTTPException(status_code=400, detail="Title cannot be empty")
+    try:
+        article = {
+            "_id": f"dynamic-{hash(request.title + request.content)}",
+            "title": request.title,
+            "slug": request.title.lower().replace(" ", "-"),
+            "category": request.category,
+            "author": request.author,
+            "excerpt": (
+                request.content[:200] + "..."
+                if len(request.content) > 200
+                else request.content
+            ),
+            "publishedAt": "",
+            "source": request.source,
+        }
+
+        article_text = (
+            f"Title: {request.title}\n"
+            f"Category: {request.category}\n"
+            f"Author: {request.author}\n\n"
+            f"Content:\n{request.content}"
+        )
+
+        chunks_stored = ingest_article(article, article_text)
+
+        return DocumentIngestResponse(
+            success=True,
+            chunks_stored=chunks_stored,
+            message=(
+                f"Successfully ingested '{request.title}' "
+                f"({chunks_stored} chunks stored)"
+            ),
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Ingestion failed: {str(e)}")
