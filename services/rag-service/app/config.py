@@ -28,8 +28,7 @@ class Settings:
     WEBHOOK_SECRET: str = os.getenv("WEBHOOK_SECRET", "")
     RAG_SERVICE_PORT: int = int(os.getenv("RAG_SERVICE_PORT", "8000"))
     ALLOWED_ORIGINS: list[str] = os.getenv(
-        "ALLOWED_ORIGINS",
-        "http://localhost:3000,http://localhost:3002",
+        "ALLOWED_ORIGINS", "*"
     ).split(",")
 
     # RAG
