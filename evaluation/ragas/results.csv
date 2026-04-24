@@ -1,0 +1,6 @@
+question,faithfulness,answer_relevancy,context_recall,context_precision
+What are the phases of cloud migration?,1.0,0.5714285714285714,1.0,0.2
+How does RAG reduce hallucinations?,1.0,0.2,0.75,0.2
+What is a headless CMS?,1.0,0.6,1.0,0.2
+What is domain ownership in data mesh?,1.0,0.7142857142857143,0.75,0.2
+What are the key microservices patterns?,1.0,0.5,1.0,0.2
