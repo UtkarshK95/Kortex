@@ -114,22 +114,6 @@
         
     }
       const usedRemotes = [
-                {
-                  entryGlobalName: "contentMfe",
-                  name: "contentMfe",
-                  type: "module",
-                  entry: "http://localhost:3001/remoteEntry.js",
-                  shareScope: "default",
-                }
-          ,
-                {
-                  entryGlobalName: "ragMfe",
-                  name: "ragMfe",
-                  type: "module",
-                  entry: "http://localhost:3002/remoteEntry.js",
-                  shareScope: "default",
-                }
-          
       ]
       export {
         usedShared,

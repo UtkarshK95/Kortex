@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/components/mfeerrorboundary.tsx","./src/components/navbar.tsx","./src/components/sidebar.tsx","./src/pages/assistantpage.tsx","./src/pages/homepage.tsx","./src/pages/knowledgepage.tsx","./src/store/usekortexstore.ts","./src/types/remote.d.ts"],"version":"5.9.3"}

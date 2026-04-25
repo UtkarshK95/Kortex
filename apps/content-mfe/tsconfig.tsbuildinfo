@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/components/articlecard.tsx","./src/components/articledetail.tsx","./src/components/articlelist.tsx","./src/data/articles.ts","./src/hooks/usesanityarticles.ts","./src/lib/blocktotext.ts","./src/lib/queries.ts","./src/lib/sanity.ts","./src/types/sanity.ts"],"version":"5.9.3"}
