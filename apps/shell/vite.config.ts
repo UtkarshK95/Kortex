@@ -14,13 +14,13 @@ export default defineConfig({
         contentMfe: {
           type: 'module',
           name: 'contentMfe',
-          entry: 'http://localhost:3001/remoteEntry.js',
+          entry: `${process.env.VITE_CONTENT_MFE_URL || 'http://localhost:3001'}/remoteEntry.js`,
           shareScope: 'default',
         },
         ragMfe: {
           type: 'module',
           name: 'ragMfe',
-          entry: 'http://localhost:3002/remoteEntry.js',
+          entry: `${process.env.VITE_RAG_MFE_URL || 'http://localhost:3002'}/remoteEntry.js`,
           shareScope: 'default',
         },
       },
