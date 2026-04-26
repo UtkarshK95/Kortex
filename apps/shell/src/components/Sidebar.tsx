@@ -61,37 +61,6 @@ export default function Sidebar() {
             )
           })}
         </nav>
-
-        {/* MFE Architecture indicator */}
-        <div className="mt-8 p-3 bg-gray-900 rounded-lg
-                        border border-gray-800">
-          <p className="text-xs text-gray-500 font-medium mb-2">
-            MFE Status
-          </p>
-          {[
-            { name: 'Shell', port: '3000', active: true },
-            { name: 'Content MFE', port: '3001', active: false },
-            { name: 'RAG MFE', port: '3002', active: false },
-          ].map((mfe) => (
-            <div key={mfe.name}
-                 className="flex items-center justify-between
-                            py-1">
-              <span className="text-xs text-gray-400">
-                {mfe.name}
-              </span>
-              <div className="flex items-center gap-1.5">
-                <div className={`w-1.5 h-1.5 rounded-full ${
-                  mfe.active
-                    ? 'bg-green-400'
-                    : 'bg-gray-600'
-                }`} />
-                <span className="text-xs text-gray-600">
-                  :{mfe.port}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
     </aside>
   )
