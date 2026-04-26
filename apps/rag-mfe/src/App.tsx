@@ -27,7 +27,7 @@ export default function App() {
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-gray-900/50">
+        <div className="flex items-center gap-2">
           <div className="relative">
             <select
               value={provider}
