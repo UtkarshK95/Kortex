@@ -34,15 +34,10 @@ export default function HomePage() {
             Browse articles, case studies, and service offerings
             powered by Sanity CMS.
           </p>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center">
             <span className="text-indigo-400 text-sm
                              group-hover:text-indigo-300">
               Browse content →
-            </span>
-            <span className="text-xs text-gray-600
-                             font-mono bg-gray-800 px-2 py-1
-                             rounded">
-              content-mfe:3001
             </span>
           </div>
         </Link>
@@ -61,15 +56,10 @@ export default function HomePage() {
             Ask natural language questions and get accurate
             answers grounded in enterprise content via RAG.
           </p>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center">
             <span className="text-indigo-400 text-sm
                              group-hover:text-indigo-300">
               Ask a question →
-            </span>
-            <span className="text-xs text-gray-600
-                             font-mono bg-gray-800 px-2 py-1
-                             rounded">
-              rag-mfe:3002
             </span>
           </div>
         </Link>

@@ -12,9 +12,6 @@ interface KortexStore {
   user: User | null
   isAuthenticated: boolean
   setUser: (user: User | null) => void
-  // UI
-  sidebarOpen: boolean
-  toggleSidebar: () => void
   // RAG
   lastQuery: string
   setLastQuery: (query: string) => void
@@ -25,9 +22,6 @@ export const useKortexStore = create<KortexStore>((set) => ({
   isAuthenticated: false,
   setUser: (user) =>
     set({ user, isAuthenticated: !!user }),
-  sidebarOpen: true,
-  toggleSidebar: () =>
-    set((state) => ({ sidebarOpen: !state.sidebarOpen })),
   lastQuery: '',
   setLastQuery: (query) => set({ lastQuery: query }),
 }))

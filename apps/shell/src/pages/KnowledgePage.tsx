@@ -34,18 +34,9 @@ export default function KnowledgePage() {
         <p className="text-gray-400">
           Browse articles, case studies, and service offerings
         </p>
-        <div className="mt-3 inline-flex items-center gap-2
-                        bg-indigo-500/10 border border-indigo-500/20
-                        rounded-full px-3 py-1">
-          <div className="w-2 h-2 rounded-full bg-indigo-400
-                          animate-pulse" />
-          <span className="text-indigo-400 text-xs font-medium">
-            Loaded from Content MFE · port 3001
-          </span>
-        </div>
       </div>
 
-      <MFEErrorBoundary mfeName="Content MFE" port="3001">
+      <MFEErrorBoundary mfeName="Knowledge Hub">
         <Suspense fallback={<ArticleListSkeleton />}>
           <ContentApp />
         </Suspense>

@@ -3,7 +3,6 @@ import { Component, ReactNode } from 'react'
 interface Props {
   children: ReactNode
   mfeName: string
-  port: string
 }
 
 interface State {
@@ -33,11 +32,8 @@ export default class MFEErrorBoundary
             <h3 className="text-white font-semibold mb-2">
               {this.props.mfeName} unavailable
             </h3>
-            <p className="text-gray-400 text-sm mb-2">
-              Make sure the app is running on port{' '}
-              <code className="text-indigo-400">
-                {this.props.port}
-              </code>
+            <p className="text-gray-400 text-sm mb-4">
+              This section is currently unavailable. Please try again later.
             </p>
             <p className="text-gray-600 text-xs font-mono mb-4">
               {this.state.error?.message}

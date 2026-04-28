@@ -10,7 +10,7 @@ export default function AssistantPage() {
       style={{ height: 'calc(100vh - 4rem)' }}
     >
       <div className="flex-1 min-h-0 flex flex-col">
-        <MFEErrorBoundary mfeName="RAG MFE" port="3002">
+        <MFEErrorBoundary mfeName="AI Assistant">
           <Suspense
             fallback={
               <div className="flex-1 flex items-center justify-center text-gray-500">
