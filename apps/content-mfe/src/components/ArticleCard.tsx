@@ -6,37 +6,30 @@ interface ArticleCardProps {
 }
 
 const categoryColors: Record<string, string> = {
-  cloud:
-    'bg-blue-500/10 text-blue-400 border-blue-500/20',
-  'digital-transformation':
-    'bg-purple-500/10 text-purple-400 border-purple-500/20',
-  'ai-data':
-    'bg-green-500/10 text-green-400 border-green-500/20',
-  'enterprise-architecture':
-    'bg-orange-500/10 text-orange-400 border-orange-500/20',
+  'ai-data': 'bg-violet-500/20 text-violet-400',
+  cloud: 'bg-violet-500/20 text-violet-400',
+  'digital-transformation': 'bg-violet-500/20 text-violet-400',
+  'enterprise-architecture': 'bg-violet-500/20 text-violet-400',
 }
 
-export default function ArticleCard({
-  article,
-  onSelect,
-}: ArticleCardProps) {
+export default function ArticleCard({ article, onSelect }: ArticleCardProps) {
   const categorySlug = article.category?.slug?.current ?? ''
   const colorClass =
-    categoryColors[categorySlug] ||
-    'bg-gray-500/10 text-gray-400 border-gray-500/20'
+    categoryColors[categorySlug] || 'bg-violet-500/20 text-violet-400'
 
   return (
     <article
       onClick={() => onSelect(article.slug.current)}
-      className="bg-gray-900 border border-gray-800 rounded-xl
-                 p-6 hover:border-indigo-500/50 transition-all
-                 duration-200 cursor-pointer group h-full
-                 flex flex-col"
+      className="group rounded-2xl p-6 cursor-pointer flex flex-col
+                 gap-4 h-full transition-all duration-300 border border-white/8
+                 hover:border-violet-600/40 hover:-translate-y-0.5
+                 hover:shadow-xl"
+      style={{ backgroundColor: '#0f0f1a' }}
     >
-      <div className="flex items-center justify-between mb-4">
+      {/* Top row: category badge + read time */}
+      <div className="flex items-center justify-between">
         <span
-          className={`text-xs px-2.5 py-1 rounded-full
-                     border font-medium ${colorClass}`}
+          className={`text-sm font-extrabold px-2.5 py-1 rounded-full ${colorClass}`}
         >
           {article.category?.name ?? 'Uncategorized'}
         </span>
@@ -45,43 +38,43 @@ export default function ArticleCard({
         </span>
       </div>
 
+      {/* Title */}
       <h2
-        className="text-white font-semibold text-lg mb-3
-                   group-hover:text-indigo-300 transition-colors
+        className="text-white font-bold text-lg leading-snug
                    line-clamp-2 flex-1"
       >
         {article.title}
       </h2>
 
+      {/* Description */}
       <p
-        className="text-gray-400 text-sm leading-relaxed
-                   line-clamp-3 mb-4"
+        className="text-gray-500 text-sm leading-relaxed
+                   line-clamp-3"
       >
         {article.excerpt}
       </p>
 
-      <div
-        className="flex items-center justify-between pt-4
-                   border-t border-gray-800"
-      >
+      {/* Footer: author + date + hover CTA */}
+      <div className="flex items-center justify-between pt-4">
         <div className="flex items-center gap-2">
-          <div
-            className="w-6 h-6 rounded-full bg-indigo-600
-                       flex items-center justify-center"
-          >
-            <span className="text-white text-xs">
-              {article.author?.charAt(0) ?? '?'}
-            </span>
-          </div>
-          <span className="text-gray-400 text-xs">
+          <span className="text-violet-400 text-xs font-bold">
             {article.author}
           </span>
+          <span className="text-gray-600 text-xs">·</span>
+          <span className="text-gray-600 text-xs">
+            {new Date(article.publishedAt).toLocaleDateString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+            })}
+          </span>
         </div>
-        <span className="text-gray-500 text-xs">
-          {new Date(article.publishedAt).toLocaleDateString(
-            'en-US',
-            { month: 'short', day: 'numeric', year: 'numeric' }
-          )}
+        <span
+          className="text-violet-400 text-xs opacity-0
+                     group-hover:opacity-100 transition-opacity
+                     duration-200 shrink-0 ml-2"
+        >
+          Read article →
         </span>
       </div>
     </article>

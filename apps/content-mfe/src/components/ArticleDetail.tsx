@@ -13,110 +13,87 @@ export default function ArticleDetail({
   const bodyText = blockToText(article.body)
 
   return (
-    <article className="max-w-3xl mx-auto">
-      <button
-        onClick={onBack}
-        className="inline-flex items-center gap-2 text-gray-400
-                   hover:text-white text-sm mb-8 transition-colors"
-      >
-        <svg
-          className="w-4 h-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
+    <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+      <div className="max-w-4xl mx-auto px-8 py-12">
+
+        {/* Back link */}
+        <button
+          onClick={onBack}
+          className="inline-flex items-center gap-1.5 text-gray-500
+                     hover:text-gray-300 hover:underline text-sm mb-10
+                     transition-colors"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M15 19l-7-7 7-7"
-          />
-        </svg>
-        Back to Knowledge Hub
-      </button>
+          ← Back to Knowledge Hub
+        </button>
 
-      <header className="mb-8">
-        <div className="flex items-center gap-3 mb-4">
-          <span
-            className="text-xs px-2.5 py-1 rounded-full
-                       bg-indigo-500/10 text-indigo-400
-                       border border-indigo-500/20 font-medium"
-          >
-            {article.category?.name ?? 'Uncategorized'}
-          </span>
-          <span className="text-gray-500 text-xs">
-            {article.readTime} min read
-          </span>
-        </div>
-
-        <h1
-          className="text-3xl font-bold text-white mb-4
-                     leading-tight"
-        >
-          {article.title}
-        </h1>
-
-        <p className="text-gray-400 text-lg leading-relaxed mb-6">
-          {article.excerpt}
-        </p>
-
-        <div
-          className="flex items-center gap-4 pb-6
-                     border-b border-gray-800"
-        >
-          <div className="flex items-center gap-2">
-            <div
-              className="w-8 h-8 rounded-full bg-indigo-600
-                         flex items-center justify-center"
-            >
-              <span className="text-white text-sm">
-                {article.author?.charAt(0) ?? '?'}
-              </span>
-            </div>
-            <div>
-              <p className="text-white text-sm font-medium">
-                {article.author}
-              </p>
-              <p className="text-gray-500 text-xs">
-                {new Date(article.publishedAt).toLocaleDateString(
-                  'en-US',
-                  {
-                    month: 'long',
-                    day: 'numeric',
-                    year: 'numeric',
-                  }
-                )}
-              </p>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {article.tags && article.tags.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-8">
-          {article.tags.map((tag) => (
+        {/* Header */}
+        <header className="max-w-3xl flex flex-col gap-5 mb-12">
+          <div className="flex items-center gap-3">
             <span
-              key={tag}
-              className="text-xs px-2.5 py-1 rounded-full
-                         bg-gray-800 text-gray-400 border
-                         border-gray-700"
+              className="bg-violet-500/20 text-violet-400 text-sm
+                         font-extrabold px-2.5 py-1 rounded-full"
             >
-              {tag}
+              {article.category?.name ?? 'Uncategorized'}
             </span>
+            <span className="text-gray-500 text-xs">
+              {article.readTime} min read
+            </span>
+          </div>
+
+          <h1 className="text-4xl font-bold text-white leading-tight">
+            {article.title}
+          </h1>
+
+          <p className="text-gray-400 text-lg leading-relaxed">
+            {article.excerpt}
+          </p>
+
+          <div
+            className="flex items-center gap-2 pb-8"
+            style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}
+          >
+            <span className="text-violet-400 text-sm font-bold">
+              {article.author}
+            </span>
+            <span className="text-gray-600 text-xs">·</span>
+            <span className="text-gray-500 text-xs">
+              {new Date(article.publishedAt).toLocaleDateString('en-US', {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric',
+              })}
+            </span>
+          </div>
+        </header>
+
+        {/* Tags */}
+        {article.tags && article.tags.length > 0 && (
+          <div className="max-w-3xl flex flex-wrap gap-2 mb-8">
+            {article.tags.map((tag) => (
+              <span
+                key={tag}
+                className="text-xs px-2.5 py-1 rounded-full
+                           bg-gray-800 text-gray-400"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Body */}
+        <div className="max-w-3xl space-y-6">
+          {bodyText.split('\n\n').map((paragraph, index) => (
+            <p
+              key={index}
+              className="text-gray-300 text-base leading-7"
+            >
+              {paragraph.trim()}
+            </p>
           ))}
         </div>
-      )}
 
-      <div className="space-y-4">
-        {bodyText.split('\n\n').map((paragraph, index) => (
-          <p
-            key={index}
-            className="text-gray-300 leading-relaxed"
-          >
-            {paragraph.trim()}
-          </p>
-        ))}
       </div>
-    </article>
+    </div>
   )
 }

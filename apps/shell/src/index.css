@@ -1,1 +1,11 @@
 @import "tailwindcss";
+
+@keyframes kortex-orb-1 {
+  0%, 100% { transform: translate(0px, 0px); }
+  50%       { transform: translate(40px, -30px); }
+}
+
+@keyframes kortex-orb-2 {
+  0%, 100% { transform: translate(0px, 0px); }
+  50%       { transform: translate(-35px, 25px); }
+}

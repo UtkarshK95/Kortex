@@ -59,20 +59,16 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gray-950 text-white">
       {selectedArticle ? (
-        <div className="p-8">
-          <ArticleDetail
-            article={selectedArticle}
-            onBack={() => setSelectedSlug(null)}
-          />
-        </div>
+        <ArticleDetail
+          article={selectedArticle}
+          onBack={() => setSelectedSlug(null)}
+        />
       ) : (
-        <div className="p-8">
-          <ArticleList
-            articles={articles}
-            categories={categories}
-            onSelectArticle={setSelectedSlug}
-          />
-        </div>
+        <ArticleList
+          articles={articles}
+          categories={categories}
+          onSelectArticle={setSelectedSlug}
+        />
       )}
     </div>
   )
