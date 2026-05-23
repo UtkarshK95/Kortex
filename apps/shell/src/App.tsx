@@ -1,8 +1,15 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { useAuth } from '@clerk/react'
 import Navbar from './components/Navbar'
 import HomePage from './pages/HomePage'
 import KnowledgePage from './pages/KnowledgePage'
 import AssistantPage from './pages/AssistantPage'
+
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { isSignedIn } = useAuth()
+  if (!isSignedIn) return <Navigate to="/" replace />
+  return <>{children}</>
+}
 
 export default function App() {
   return (
@@ -13,9 +20,9 @@ export default function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/knowledge/*"
-                   element={<KnowledgePage />} />
+                   element={<ProtectedRoute><KnowledgePage /></ProtectedRoute>} />
             <Route path="/assistant/*"
-                   element={<AssistantPage />} />
+                   element={<ProtectedRoute><AssistantPage /></ProtectedRoute>} />
           </Routes>
         </main>
       </div>

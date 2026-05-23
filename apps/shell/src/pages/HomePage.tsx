@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { useAuth, useClerk } from '@clerk/react'
 import { BookOpen, Bot, Upload } from 'lucide-react'
 
 const features = [
@@ -56,6 +57,16 @@ const architecture = [
 ]
 
 export default function HomePage() {
+  const { isSignedIn } = useAuth()
+  const { openSignIn } = useClerk()
+
+  function handleProtectedClick(e: React.MouseEvent) {
+    if (!isSignedIn) {
+      e.preventDefault()
+      openSignIn()
+    }
+  }
+
   return (
     <div
       className="min-h-screen text-white pb-20 md:pb-0"
@@ -114,6 +125,7 @@ export default function HomePage() {
                           justify-center gap-4">
             <Link
               to="/knowledge"
+              onClick={handleProtectedClick}
               className="px-7 py-3 rounded-xl bg-violet-600 hover:bg-violet-700
                          text-white font-semibold text-sm transition-all
                          duration-200 hover:-translate-y-0.5
@@ -123,6 +135,7 @@ export default function HomePage() {
             </Link>
             <Link
               to="/assistant"
+              onClick={handleProtectedClick}
               className="px-7 py-3 rounded-xl border border-violet-600/50
                          hover:border-violet-500 text-violet-400
                          hover:text-violet-300 font-semibold text-sm
@@ -145,6 +158,7 @@ export default function HomePage() {
             <Link
               key={title}
               to={href}
+              onClick={handleProtectedClick}
               className="group rounded-2xl p-6 transition-all duration-300
                          hover:-translate-y-1 hover:shadow-xl"
               style={{

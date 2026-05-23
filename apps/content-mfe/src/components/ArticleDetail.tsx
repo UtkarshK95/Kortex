@@ -14,20 +14,19 @@ export default function ArticleDetail({
 
   return (
     <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-      <div className="max-w-4xl mx-auto px-8 py-12">
+      <div className="max-w-4xl mx-auto px-8" style={{ paddingTop: '48px', paddingBottom: '32px' }}>
 
         {/* Back link */}
         <button
           onClick={onBack}
-          className="inline-flex items-center gap-1.5 text-gray-500
-                     hover:text-gray-300 hover:underline text-sm mb-10
-                     transition-colors"
+          className="back-btn inline-flex items-center gap-1.5 text-gray-500 text-sm transition-colors"
+          style={{ cursor: 'pointer', marginBottom: '24px' }}
         >
           ← Back to Knowledge Hub
         </button>
 
         {/* Header */}
-        <header className="max-w-3xl flex flex-col gap-5 mb-12">
+        <header className="max-w-3xl flex flex-col gap-5" style={{ marginBottom: '24px' }}>
           <div className="flex items-center gap-3">
             <span
               className="bg-violet-500/20 text-violet-400 text-sm
@@ -49,7 +48,7 @@ export default function ArticleDetail({
           </p>
 
           <div
-            className="flex items-center gap-2 pb-8"
+            className="flex items-center gap-2 pb-6"
             style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}
           >
             <span className="text-violet-400 text-sm font-bold">
@@ -68,12 +67,18 @@ export default function ArticleDetail({
 
         {/* Tags */}
         {article.tags && article.tags.length > 0 && (
-          <div className="max-w-3xl flex flex-wrap gap-2 mb-8">
+          <div className="max-w-3xl flex flex-wrap gap-2" style={{ marginBottom: '24px' }}>
             {article.tags.map((tag) => (
               <span
                 key={tag}
-                className="text-xs px-2.5 py-1 rounded-full
-                           bg-gray-800 text-gray-400"
+                style={{
+                  backgroundColor: '#7c3aed',
+                  color: 'white',
+                  padding: '4px 10px',
+                  borderRadius: '6px',
+                  fontSize: '12px',
+                  fontWeight: '600',
+                }}
               >
                 {tag}
               </span>
