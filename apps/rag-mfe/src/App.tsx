@@ -3,69 +3,80 @@ import { useRAGQuery } from './hooks/useRAGQuery'
 import ChatWindow from './components/ChatWindow'
 import ChatInput from './components/ChatInput'
 import UploadPanel from './components/UploadPanel'
+import { Upload } from 'lucide-react'
 
 export default function App() {
-  const { messages, isLoading, sendQuery, clearMessages, provider, setProvider } = useRAGQuery()
+  const {
+    messages,
+    isLoading,
+    sendQuery,
+    clearMessages,
+    provider,
+    setProvider,
+  } = useRAGQuery()
   const [showUpload, setShowUpload] = useState(false)
   const [lastUploaded, setLastUploaded] = useState<string | null>(null)
 
   return (
     <div className="flex flex-col h-full min-h-0 bg-gray-950 text-white">
-      {/* Compact header */}
-      <div className="flex items-center justify-between px-4 py-1 border-b border-gray-800 bg-gray-950 shrink-0">
+      {/* Header */}
+      <div
+        className="flex items-center justify-between px-4 py-3 shrink-0"
+        style={{
+          backgroundColor: '#0f0f1a',
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
+        }}
+      >
+        {/* Left: title + model */}
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 bg-indigo-600 rounded-md flex items-center justify-center text-xs">
-            🤖
-          </div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-white font-semibold text-sm">Kortex Assistant</h2>
-            <div className="flex items-center gap-1">
-              <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
-              <span className="text-gray-500 text-xs">
-                {provider === 'gemini' ? 'Gemini 2.5 Flash + Qdrant' : 'Groq Llama 3.3 + Qdrant'}
-              </span>
-            </div>
-          </div>
+          <span className="text-white font-bold text-sm">Kortex Assistant</span>
+          <span className="text-gray-600 text-xs">·</span>
+          <span className="text-gray-500 text-xs">
+            {provider === 'gemini'
+              ? 'Gemini 2.5 Flash + Qdrant'
+              : 'Groq Llama 3.3 + Qdrant'}
+          </span>
         </div>
-        <div className="flex items-center gap-2">
+
+        {/* Right: controls */}
+        <div className="flex items-center gap-3">
+          {/* Provider switcher */}
           <div className="relative">
             <select
               value={provider}
               onChange={(e) => setProvider(e.target.value as 'gemini' | 'groq')}
-              className="appearance-none bg-gray-800
-                         border border-gray-700 text-white
-                         text-xs font-medium rounded-lg
-                         pl-3 pr-7 py-1.5 cursor-pointer
-                         hover:border-indigo-500/50
-                         focus:outline-none focus:border-indigo-500
-                         transition-colors"
+              className="appearance-none text-violet-400 text-xs font-medium
+                         rounded-full pl-3 pr-7 py-1.5 cursor-pointer
+                         focus:outline-none transition-colors"
+              style={{
+                backgroundColor: 'transparent',
+                border: '1px solid rgba(124,58,237,0.5)',
+              }}
             >
-              <option value="gemini">✦ Gemini</option>
-              <option value="groq">⚡ Groq</option>
+              <option value="gemini" style={{ backgroundColor: '#0f0f1a' }}>
+                ✦ Gemini
+              </option>
+              <option value="groq" style={{ backgroundColor: '#0f0f1a' }}>
+                ⚡ Groq
+              </option>
             </select>
-            <div className="pointer-events-none absolute inset-y-0
-                            right-2 flex items-center">
-              <svg className="w-3 h-3 text-gray-400" fill="none"
-                   stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round"
-                      strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </div>
           </div>
+
+          {/* Upload */}
           <button
             onClick={() => setShowUpload(true)}
-            className="text-gray-500 hover:text-gray-300
-                       text-xs transition-colors px-2.5 py-1
-                       bg-gray-800 rounded-lg hover:bg-gray-700
-                       flex items-center gap-1.5"
+            className="flex items-center gap-1.5 text-gray-500 hover:text-gray-300
+                       text-xs transition-colors"
           >
-            <span>📄</span>
+            <Upload className="w-3.5 h-3.5" />
             <span>Upload</span>
           </button>
+
+          {/* Clear chat */}
           {messages.length > 0 && (
             <button
               onClick={clearMessages}
-              className="text-gray-500 hover:text-gray-300 text-xs transition-colors px-2.5 py-1 bg-gray-800 rounded-lg hover:bg-gray-700"
+              className="text-gray-500 hover:text-gray-300 text-xs transition-colors"
             >
               Clear chat
             </button>
@@ -75,16 +86,16 @@ export default function App() {
 
       {/* Upload success toast */}
       {lastUploaded && (
-        <div className="bg-green-500/10 border-b
-                        border-green-500/20 px-4 py-2
-                        flex items-center justify-between shrink-0">
+        <div
+          className="bg-green-500/10 border-b border-green-500/20
+                        px-4 py-2 flex items-center justify-between shrink-0"
+        >
           <p className="text-green-400 text-xs">
             ✅ "{lastUploaded}" ingested — ask about it now!
           </p>
           <button
             onClick={() => setLastUploaded(null)}
-            className="text-green-600 hover:text-green-400
-                       text-xs ml-4"
+            className="text-green-600 hover:text-green-400 text-xs ml-4"
           >
             ✕
           </button>

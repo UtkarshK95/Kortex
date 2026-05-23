@@ -48,16 +48,23 @@ export default function ChatInput({
   }
 
   return (
-    <div className="bg-gray-950 shrink-0 px-4 pb-4 pt-3 border-t border-gray-800">
+    <div
+      className="shrink-0 px-4 pb-4 pt-3"
+      style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}
+    >
       {/* Suggested questions — only before first message */}
       {!hasMessages && (
-        <div className="flex flex-wrap gap-2 mb-3">
+        <div className="flex gap-2 overflow-x-auto pb-3 scrollbar-none">
           {SUGGESTED_QUESTIONS.map((q) => (
             <button
               key={q}
               onClick={() => onSend(q)}
               disabled={isLoading}
-              className="text-xs px-3 py-1.5 bg-gray-800 text-gray-400 rounded-full border border-gray-700 hover:border-indigo-500/50 hover:text-indigo-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="shrink-0 text-sm px-4 py-2 rounded-full
+                         border border-white/15 text-gray-300
+                         hover:bg-white/5 hover:border-violet-600/40
+                         transition-colors disabled:opacity-50
+                         disabled:cursor-not-allowed"
             >
               {q}
             </button>
@@ -65,8 +72,15 @@ export default function ChatInput({
         </div>
       )}
 
-      {/* Single unified input bar */}
-      <div className="flex items-end gap-2 bg-gray-800 rounded-2xl px-4 py-3 border border-gray-700 focus-within:border-indigo-500/40 transition-colors">
+      {/* Input bar */}
+      <div
+        className="flex items-end gap-2 rounded-xl px-4 py-3
+                   transition-colors"
+        style={{
+          backgroundColor: '#0f0f1a',
+          border: '1px solid rgba(255,255,255,0.08)',
+        }}
+      >
         <textarea
           ref={textareaRef}
           value={input}
@@ -77,18 +91,24 @@ export default function ChatInput({
           disabled={isLoading}
           rows={1}
           style={{ resize: 'none' }}
-          className="flex-1 bg-transparent text-white text-sm placeholder-gray-500 overflow-hidden outline-none border-0 ring-0 focus:ring-0 focus:outline-none leading-relaxed disabled:opacity-50 min-h-5 max-h-20"
+          className="flex-1 bg-transparent text-white text-sm
+                     placeholder-gray-500 overflow-hidden outline-none
+                     border-0 ring-0 focus:ring-0 focus:outline-none
+                     leading-relaxed disabled:opacity-50 min-h-5 max-h-20"
         />
 
-        {/* Up arrow send button */}
         <button
           onClick={handleSend}
           disabled={!input.trim() || isLoading}
-          className="w-8 h-8 rounded-full flex items-center justify-center transition-all flex-shrink-0 bg-indigo-600 hover:bg-indigo-500 disabled:bg-gray-700 disabled:cursor-not-allowed"
+          className="w-8 h-8 rounded-full flex items-center justify-center
+                     transition-all flex-shrink-0 bg-violet-600
+                     hover:bg-violet-500 disabled:bg-gray-700
+                     disabled:cursor-not-allowed"
           aria-label="Send"
         >
           {isLoading ? (
-            <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            <div className="w-3.5 h-3.5 border-2 border-white/30
+                            border-t-white rounded-full animate-spin" />
           ) : (
             <svg
               className="w-4 h-4 text-white"
