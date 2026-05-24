@@ -47,10 +47,19 @@ export default function ChatInput({
     }
   }
 
+  const isDisabled = !input.trim() || isLoading
+
   return (
+    <>
+      <style>{`
+        @keyframes kortex-pulse {
+          0%, 100% { opacity: 0.3; transform: scale(0.8); }
+          50% { opacity: 1; transform: scale(1.1); }
+        }
+      `}</style>
     <div
-      className="shrink-0 px-4 pb-4 pt-3"
-      style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}
+      className="px-4 pb-4 pt-3"
+      style={{ borderTop: '1px solid rgba(255,255,255,0.08)', flexShrink: 0 }}
     >
       {/* Suggested questions — only before first message */}
       {!hasMessages && (
@@ -98,39 +107,67 @@ export default function ChatInput({
                      leading-relaxed disabled:opacity-50 min-h-5 max-h-20"
         />
 
-        <button
-          onClick={handleSend}
-          disabled={!input.trim() || isLoading}
-          className="w-8 h-8 rounded-full flex items-center justify-center
-                     transition-all flex-shrink-0 bg-violet-600
-                     hover:bg-violet-500 disabled:bg-gray-700
-                     disabled:cursor-not-allowed"
-          aria-label="Send"
-        >
-          {isLoading ? (
-            <div className="w-3.5 h-3.5 border-2 border-white/30
-                            border-t-white rounded-full animate-spin" />
-          ) : (
+        {isDisabled ? (
+          <button
+            disabled
+            aria-label="Loading"
+            style={{
+              backgroundColor: 'rgba(124, 58, 237, 0.4)',
+              borderRadius: '50%',
+              width: '40px',
+              height: '40px',
+              border: 'none',
+              cursor: 'not-allowed',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}
+          >
             <svg
-              className="w-4 h-4 text-white"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2.5}
+              width="20"
+              height="20"
               viewBox="0 0 24 24"
+              fill="none"
+              stroke="rgba(255,255,255,0.7)"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M5 10l7-7m0 0l7 7m-7-7v18"
-              />
+              <path d="M12 8V4H8" />
+              <rect width="16" height="12" x="4" y="8" rx="2" />
+              <path d="M2 14h2" />
+              <path d="M20 14h2" />
+              <path d="M15 13v2" />
+              <path d="M9 13v2" />
             </svg>
-          )}
-        </button>
+          </button>
+        ) : (
+          <button
+            onClick={handleSend}
+            aria-label="Send"
+            style={{
+              backgroundColor: '#7c3aed',
+              borderRadius: '50%',
+              width: '40px',
+              height: '40px',
+              border: 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}
+          >
+            <span style={{ color: 'white', fontSize: '18px', lineHeight: 1 }}>↑</span>
+          </button>
+        )}
       </div>
 
       <p className="text-xs text-gray-600 mt-1.5 text-center">
         Press Enter to send · Shift+Enter for new line
       </p>
     </div>
+    </>
   )
 }

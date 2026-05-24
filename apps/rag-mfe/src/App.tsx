@@ -17,7 +17,10 @@ export default function App() {
   const [lastUploaded, setLastUploaded] = useState<string | null>(null)
 
   return (
-    <div className="flex flex-col h-full min-h-0 bg-gray-950 text-white">
+    <div
+      className="bg-gray-950 text-white"
+      style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}
+    >
       {/* Header */}
       <div
         className="flex items-center justify-between px-4 py-3 shrink-0"

@@ -68,41 +68,42 @@ export function useRAGQuery() {
             const dataStr = line.slice(6).trim()
             if (!dataStr) continue
 
+            let data: Record<string, unknown>
             try {
-              const data = JSON.parse(dataStr)
-
-              if (data.text !== undefined) {
-                setMessages((prev) =>
-                  prev.map((msg) =>
-                    msg.id === assistantMessage.id
-                      ? { ...msg, content: msg.content + data.text }
-                      : msg
-                  )
-                )
-              }
-
-              if (data.sources) {
-                sources = data.sources
-                setMessages((prev) =>
-                  prev.map((msg) =>
-                    msg.id === assistantMessage.id ? { ...msg, sources } : msg
-                  )
-                )
-              }
-
-              if (data.status === 'complete') {
-                setMessages((prev) =>
-                  prev.map((msg) =>
-                    msg.id === assistantMessage.id
-                      ? { ...msg, isStreaming: false }
-                      : msg
-                  )
-                )
-              }
-
-              if (data.error) throw new Error(data.error)
+              data = JSON.parse(dataStr)
             } catch {
-              // skip malformed SSE lines
+              continue // skip malformed SSE lines
+            }
+
+            if (data.error) throw new Error(data.error as string)
+
+            if (data.text !== undefined) {
+              setMessages((prev) =>
+                prev.map((msg) =>
+                  msg.id === assistantMessage.id
+                    ? { ...msg, content: msg.content + data.text }
+                    : msg
+                )
+              )
+            }
+
+            if (data.sources) {
+              sources = data.sources as Source[]
+              setMessages((prev) =>
+                prev.map((msg) =>
+                  msg.id === assistantMessage.id ? { ...msg, sources } : msg
+                )
+              )
+            }
+
+            if (data.type === 'done') {
+              setMessages((prev) =>
+                prev.map((msg) =>
+                  msg.id === assistantMessage.id
+                    ? { ...msg, isStreaming: false }
+                    : msg
+                )
+              )
             }
           }
         }

@@ -1,3 +1,5 @@
+import { useState } from 'react'
+import { X } from 'lucide-react'
 import { Source } from '../types/rag'
 
 interface SourceCardProps {
@@ -12,21 +14,154 @@ const categoryColors: Record<string, string> = {
 }
 
 export default function SourceCard({ source }: SourceCardProps) {
+  const [open, setOpen] = useState(false)
   const colorClass =
     categoryColors[source.category] || 'bg-gray-500/10 text-gray-400 border-gray-500/20'
 
   return (
-    <div className="bg-gray-900 border border-gray-700 rounded-lg p-3 hover:border-indigo-500/30 transition-colors">
-      <div className="flex items-start justify-between gap-2">
-        <p className="text-white text-xs font-medium leading-snug flex-1">{source.title}</p>
-        <span
-          className={`text-xs px-2 py-0.5 rounded-full border font-medium flex-shrink-0 ${colorClass}`}
+    <>
+      {/* Card */}
+      <div
+        className="bg-gray-900 rounded-lg"
+        style={{
+          padding: '12px',
+          border: '1px solid rgba(255,255,255,0.08)',
+          cursor: 'pointer',
+          minWidth: '280px',
+          maxWidth: '320px',
+          flexShrink: 0,
+          transition: 'all 0.15s ease',
+        }}
+        onClick={() => setOpen(true)}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.borderColor = 'rgba(139,92,246,0.4)'
+          e.currentTarget.style.backgroundColor = '#1a1a2e'
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'
+          e.currentTarget.style.backgroundColor = ''
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            gap: '8px',
+          }}
         >
-          {source.category}
-        </span>
+          <p className="text-white text-xs font-medium leading-snug" style={{ flex: 1 }}>
+            {source.title}
+          </p>
+          <span
+            className={`text-xs rounded-full border font-medium ${colorClass}`}
+            style={{ flexShrink: 0, padding: '2px 8px', whiteSpace: 'nowrap' }}
+          >
+            {source.category}
+          </span>
+        </div>
+        <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)', marginTop: '8px' }}>
+          {source.author}
+        </p>
       </div>
-      <p className="text-gray-500 text-xs mt-1.5 line-clamp-2 leading-relaxed">{source.excerpt}</p>
-      <p className="text-gray-600 text-xs mt-1.5">{source.author}</p>
-    </div>
+
+      {/* Modal */}
+      {open && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(0,0,0,0.6)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 50,
+            padding: '24px',
+          }}
+          onClick={() => setOpen(false)}
+        >
+          <div
+            style={{
+              backgroundColor: '#0f0f1a',
+              border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: '16px',
+              padding: '24px',
+              maxWidth: '480px',
+              width: '100%',
+              position: 'relative',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close */}
+            <button
+              onClick={() => setOpen(false)}
+              style={{
+                position: 'absolute',
+                top: '16px',
+                right: '16px',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: 'rgba(255,255,255,0.4)',
+                padding: '4px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <X size={16} />
+            </button>
+
+            {/* Header */}
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', paddingRight: '28px' }}>
+              <h3
+                style={{
+                  color: 'white',
+                  fontSize: '16px',
+                  fontWeight: 600,
+                  lineHeight: '1.4',
+                  margin: 0,
+                  flex: 1,
+                }}
+              >
+                {source.title}
+              </h3>
+              <span
+                className={`text-xs rounded-full border font-medium ${colorClass}`}
+                style={{ flexShrink: 0, padding: '3px 10px', whiteSpace: 'nowrap' }}
+              >
+                {source.category}
+              </span>
+            </div>
+
+            {/* Author */}
+            <p
+              style={{
+                fontSize: '12px',
+                color: 'rgba(255,255,255,0.35)',
+                margin: '10px 0 16px',
+              }}
+            >
+              {source.author}
+            </p>
+
+            {/* Divider */}
+            <div style={{ height: '1px', backgroundColor: 'rgba(255,255,255,0.08)', marginBottom: '16px' }} />
+
+            {/* Excerpt */}
+            <p
+              style={{
+                color: 'rgba(255,255,255,0.65)',
+                fontSize: '14px',
+                lineHeight: '1.7',
+                margin: 0,
+              }}
+            >
+              {source.excerpt}
+            </p>
+          </div>
+        </div>
+      )}
+    </>
   )
 }

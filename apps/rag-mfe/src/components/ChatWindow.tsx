@@ -16,7 +16,7 @@ const FEATURES = [
   {
     Icon: Quote,
     label: 'Source citations',
-    desc: 'Every answer includes article references',
+    desc: 'Answers cite source articles',
   },
   {
     Icon: Zap,
@@ -66,8 +66,8 @@ export default function ChatWindow({ messages }: ChatWindowProps) {
           style={{ textAlign: 'center', margin: 0 }}
         >
           Ask me anything about enterprise architecture, cloud migration,
-          digital transformation, or AI strategies. I will answer using
-          our knowledge base.
+          digital transformation, or AI strategies. I will answer using our
+          knowledge base.
         </p>
 
         {/* Feature cards */}
@@ -103,9 +103,20 @@ export default function ChatWindow({ messages }: ChatWindowProps) {
   }
 
   return (
-    <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-6">
+    <div
+      className="flex-1 min-h-0"
+      style={{
+        overflowY: 'auto',
+        paddingTop: '24px',
+        paddingBottom: '24px',
+        paddingLeft: '16px',
+        paddingRight: '16px',
+      }}
+    >
       {messages.map((message) => (
-        <MessageBubble key={message.id} message={message} />
+        <div key={message.id} style={{ marginBottom: '16px' }}>
+          <MessageBubble message={message} />
+        </div>
       ))}
       <div ref={bottomRef} />
     </div>
