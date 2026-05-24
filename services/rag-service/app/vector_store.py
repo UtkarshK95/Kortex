@@ -100,6 +100,7 @@ def ingest_article(article: dict, article_text: str) -> int:
                     "chunk_index": i,
                     "chunk_text": chunk,
                     "published_at": article.get("publishedAt", ""),
+                    "source": article.get("source", ""),
                 },
             )
         )

@@ -20,6 +20,7 @@ export default function UploadPanel({
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [category, setCategory] = useState('')
+  const [author, setAuthor] = useState('')
   const [status, setStatus] = useState<UploadStatus>('idle')
   const [errorMessage, setErrorMessage] = useState('')
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
@@ -82,7 +83,8 @@ export default function UploadPanel({
             title: title.trim(),
             content: content.trim(),
             category: category.trim() || 'User Upload',
-            author: 'Manual Upload',
+            author: author.trim() || 'Manual Upload',
+            uploaded_at: new Date().toISOString(),
           }),
         }
       )
@@ -234,6 +236,19 @@ export default function UploadPanel({
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             placeholder="e.g. HR Policy, Strategy, Finance"
+            style={{ ...inputStyle }}
+            {...inputFocusHandlers}
+          />
+        </div>
+
+        {/* Author */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+          <label style={labelStyle}>Author</label>
+          <input
+            type="text"
+            value={author}
+            onChange={(e) => setAuthor(e.target.value)}
+            placeholder="e.g. John Smith"
             style={{ ...inputStyle }}
             {...inputFocusHandlers}
           />

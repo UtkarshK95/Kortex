@@ -20,6 +20,23 @@ export default function SourceCard({ source }: SourceCardProps) {
 
   return (
     <>
+      <style>{`
+        .source-modal-scroll {
+          scrollbar-width: thin;
+          scrollbar-color: rgba(139,92,246,0.3) transparent;
+        }
+        .source-modal-scroll::-webkit-scrollbar {
+          width: 4px;
+        }
+        .source-modal-scroll::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .source-modal-scroll::-webkit-scrollbar-thumb {
+          background: rgba(139,92,246,0.3);
+          border-radius: 2px;
+        }
+      `}</style>
+
       {/* Card */}
       <div
         className="bg-gray-900 rounded-lg"
@@ -71,7 +88,7 @@ export default function SourceCard({ source }: SourceCardProps) {
           style={{
             position: 'fixed',
             inset: 0,
-            backgroundColor: 'rgba(0,0,0,0.6)',
+            backgroundColor: 'rgba(0,0,0,0.7)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -85,80 +102,96 @@ export default function SourceCard({ source }: SourceCardProps) {
               backgroundColor: '#0f0f1a',
               border: '1px solid rgba(255,255,255,0.1)',
               borderRadius: '16px',
-              padding: '24px',
               maxWidth: '480px',
               width: '100%',
               position: 'relative',
+              maxHeight: '80vh',
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden',
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Close */}
-            <button
-              onClick={() => setOpen(false)}
-              style={{
-                position: 'absolute',
-                top: '16px',
-                right: '16px',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                color: 'rgba(255,255,255,0.4)',
-                padding: '4px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <X size={16} />
-            </button>
-
-            {/* Header */}
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', paddingRight: '28px' }}>
-              <h3
+            {/* Fixed header */}
+            <div style={{ padding: '24px 24px 0 24px', flexShrink: 0 }}>
+              {/* Close */}
+              <button
+                onClick={() => setOpen(false)}
                 style={{
-                  color: 'white',
-                  fontSize: '16px',
-                  fontWeight: 600,
-                  lineHeight: '1.4',
-                  margin: 0,
-                  flex: 1,
+                  position: 'absolute',
+                  top: '16px',
+                  right: '16px',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: 'rgba(255,255,255,0.4)',
+                  padding: '4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
-                {source.title}
-              </h3>
-              <span
-                className={`text-xs rounded-full border font-medium ${colorClass}`}
-                style={{ flexShrink: 0, padding: '3px 10px', whiteSpace: 'nowrap' }}
+                <X size={16} />
+              </button>
+
+              {/* Title + category */}
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', paddingRight: '28px' }}>
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '16px',
+                    fontWeight: 600,
+                    lineHeight: '1.4',
+                    margin: 0,
+                    flex: 1,
+                  }}
+                >
+                  {source.title}
+                </h3>
+                <span
+                  className={`text-xs rounded-full border font-medium ${colorClass}`}
+                  style={{ flexShrink: 0, padding: '3px 10px', whiteSpace: 'nowrap' }}
+                >
+                  {source.category}
+                </span>
+              </div>
+
+              {/* Author */}
+              <p
+                style={{
+                  fontSize: '12px',
+                  color: 'rgba(255,255,255,0.35)',
+                  margin: '10px 0 16px',
+                }}
               >
-                {source.category}
-              </span>
+                {source.author}
+              </p>
+
+              {/* Divider */}
+              <div style={{ height: '1px', backgroundColor: 'rgba(255,255,255,0.08)', marginBottom: '16px' }} />
             </div>
 
-            {/* Author */}
-            <p
+            {/* Scrollable body */}
+            <div
+              className="source-modal-scroll"
               style={{
-                fontSize: '12px',
-                color: 'rgba(255,255,255,0.35)',
-                margin: '10px 0 16px',
+                overflowY: 'auto',
+                flex: 1,
+                paddingRight: '4px',
+                padding: '0 24px 24px 24px',
               }}
             >
-              {source.author}
-            </p>
-
-            {/* Divider */}
-            <div style={{ height: '1px', backgroundColor: 'rgba(255,255,255,0.08)', marginBottom: '16px' }} />
-
-            {/* Excerpt */}
-            <p
-              style={{
-                color: 'rgba(255,255,255,0.65)',
-                fontSize: '14px',
-                lineHeight: '1.7',
-                margin: 0,
-              }}
-            >
-              {source.excerpt}
-            </p>
+              <p
+                style={{
+                  color: 'rgba(255,255,255,0.65)',
+                  fontSize: '14px',
+                  lineHeight: '1.7',
+                  margin: 0,
+                }}
+              >
+                {source.excerpt}
+              </p>
+            </div>
           </div>
         </div>
       )}

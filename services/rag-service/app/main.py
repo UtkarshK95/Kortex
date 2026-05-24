@@ -11,7 +11,7 @@ from sse_starlette.sse import EventSourceResponse
 from .config import settings
 from .rag_pipeline import query_rag, stream_rag, stream_rag_groq
 from .sanity_client import article_to_text, fetch_articles
-from .vector_store import ensure_collection, ingest_article
+from .vector_store import ensure_collection, ingest_article, qdrant
 
 
 @asynccontextmanager
@@ -71,6 +71,7 @@ class DocumentIngestRequest(BaseModel):
     category: str = "User Upload"
     author: str = "Manual Upload"
     source: str = "dynamic"
+    uploaded_at: str = ""
 
 
 class DocumentIngestResponse(BaseModel):
@@ -140,7 +141,7 @@ async def ingest_document(request: DocumentIngestRequest):
                 if len(request.content) > 200
                 else request.content
             ),
-            "publishedAt": "",
+            "publishedAt": request.uploaded_at,
             "source": request.source,
         }
 
@@ -193,6 +194,52 @@ async def sanity_webhook(request: Request):
         "success": True,
         "message": f"Re-ingested {len(articles)} articles, {total_chunks} chunks",
     }
+
+
+# ── Documents ────────────────────────────────────────────────────────────────
+
+@app.get("/documents")
+async def list_documents():
+    """Return unique uploaded documents (deduplicated by title) from Qdrant."""
+    try:
+        all_points = []
+        offset = None
+        while True:
+            batch, next_offset = qdrant.scroll(
+                collection_name=settings.QDRANT_COLLECTION,
+                offset=offset,
+                limit=100,
+                with_payload=True,
+                with_vectors=False,
+            )
+            all_points.extend(batch)
+            if next_offset is None:
+                break
+            offset = next_offset
+
+        seen: dict[str, dict] = {}
+        for point in all_points:
+            payload = point.payload or {}
+            article_id = payload.get("article_id", "")
+            source = payload.get("source", "")
+            # Only surface user-uploaded documents
+            if not (article_id.startswith("dynamic-") or source == "dynamic"):
+                continue
+            title = payload.get("title", "")
+            if not title or title in seen:
+                continue
+            seen[title] = {
+                "title": title,
+                "category": payload.get("category", "User Upload"),
+                "author": payload.get("author", "Manual Upload"),
+                "excerpt": payload.get("excerpt", ""),
+                "source": "Manual Upload",
+                "uploaded_at": payload.get("published_at", ""),
+            }
+
+        return list(seen.values())
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to list documents: {str(e)}")
 
 
 # ── Query ─────────────────────────────────────────────────────────────────────
