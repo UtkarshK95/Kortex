@@ -39,45 +39,64 @@ export default function ChatWindow({ messages }: ChatWindowProps) {
 
   if (messages.length === 0) {
     return (
-      <div className="flex-1 min-h-0 flex items-center justify-center
-                      p-8 overflow-y-auto">
-        <div className="text-center max-w-lg w-full">
-          {/* Icon */}
-          <div className="flex justify-center mb-5">
-            <Bot className="w-12 h-12 text-violet-400" />
-          </div>
+      <div
+        className="flex-1 min-h-0"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100%',
+          gap: '20px',
+          padding: '20px 32px',
+          paddingBottom: '20px',
+        }}
+      >
+        {/* Icon */}
+        <Bot className="w-12 h-12 text-violet-400" />
 
-          {/* Heading */}
-          <h3 className="text-white font-bold text-2xl mb-3">
-            Kortex AI Assistant
-          </h3>
+        {/* Heading */}
+        <h3 className="text-white font-bold text-2xl" style={{ margin: 0 }}>
+          Kortex AI Assistant
+        </h3>
 
-          {/* Subtitle */}
-          <p className="text-gray-400 text-sm leading-relaxed max-w-lg
-                        mx-auto">
-            Ask me anything about enterprise architecture, cloud migration,
-            digital transformation, or AI strategies. I will answer using
-            our knowledge base.
-          </p>
+        {/* Subtitle */}
+        <p
+          className="text-gray-400 text-sm leading-relaxed max-w-lg"
+          style={{ textAlign: 'center', margin: 0 }}
+        >
+          Ask me anything about enterprise architecture, cloud migration,
+          digital transformation, or AI strategies. I will answer using
+          our knowledge base.
+        </p>
 
-          {/* Feature cards */}
-          <div className="mt-8 grid grid-cols-2 gap-3 text-left">
-            {FEATURES.map(({ Icon, label, desc }) => (
-              <div
-                key={label}
-                className="rounded-xl p-4 transition-colors duration-200
-                           hover:border-violet-600/40"
-                style={{
-                  backgroundColor: '#0f0f1a',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                }}
-              >
-                <Icon className="w-4 h-4 text-violet-400 mb-2" />
-                <p className="text-white text-xs font-bold mb-1">{label}</p>
-                <p className="text-gray-500 text-xs leading-relaxed">{desc}</p>
-              </div>
-            ))}
-          </div>
+        {/* Feature cards */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '12px',
+            width: '100%',
+            maxWidth: '512px',
+          }}
+        >
+          {FEATURES.map(({ Icon, label, desc }) => (
+            <div
+              key={label}
+              className="rounded-xl transition-colors duration-200
+                         hover:border-violet-600/40 flex flex-col items-center
+                         text-center"
+              style={{
+                backgroundColor: '#0f0f1a',
+                border: '1px solid rgba(255,255,255,0.08)',
+                padding: '12px 16px',
+              }}
+            >
+              <Icon className="w-4 h-4 text-violet-400 mb-1.5" />
+              <p className="text-white text-xs font-bold mb-0.5">{label}</p>
+              <p className="text-gray-500 text-xs leading-relaxed">{desc}</p>
+            </div>
+          ))}
         </div>
       </div>
     )

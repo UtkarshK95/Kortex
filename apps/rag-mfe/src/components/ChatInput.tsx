@@ -54,13 +54,14 @@ export default function ChatInput({
     >
       {/* Suggested questions — only before first message */}
       {!hasMessages && (
-        <div className="flex gap-2 overflow-x-auto pb-3 scrollbar-none">
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', padding: '8px 16px 4px', width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}>
           {SUGGESTED_QUESTIONS.map((q) => (
             <button
               key={q}
               onClick={() => onSend(q)}
               disabled={isLoading}
-              className="shrink-0 text-sm px-4 py-2 rounded-full
+              style={{ whiteSpace: 'nowrap', flexShrink: 0 }}
+              className="text-sm px-4 py-2 rounded-full
                          border border-white/15 text-gray-300
                          hover:bg-white/5 hover:border-violet-600/40
                          transition-colors disabled:opacity-50

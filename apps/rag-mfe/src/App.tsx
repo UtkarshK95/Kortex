@@ -3,7 +3,6 @@ import { useRAGQuery } from './hooks/useRAGQuery'
 import ChatWindow from './components/ChatWindow'
 import ChatInput from './components/ChatInput'
 import UploadPanel from './components/UploadPanel'
-import { Upload } from 'lucide-react'
 
 export default function App() {
   const {
@@ -30,8 +29,8 @@ export default function App() {
         {/* Left: title + model */}
         <div className="flex items-center gap-2">
           <span className="text-white font-bold text-sm">Kortex Assistant</span>
-          <span className="text-gray-600 text-xs">·</span>
-          <span className="text-gray-500 text-xs">
+          <span className="text-gray-500 text-xs">·</span>
+          <span className="text-gray-400 text-xs">
             {provider === 'gemini'
               ? 'Gemini 2.5 Flash + Qdrant'
               : 'Groq Llama 3.3 + Qdrant'}
@@ -39,7 +38,7 @@ export default function App() {
         </div>
 
         {/* Right: controls */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           {/* Provider switcher */}
           <div className="relative">
             <select
@@ -65,11 +64,21 @@ export default function App() {
           {/* Upload */}
           <button
             onClick={() => setShowUpload(true)}
-            className="flex items-center gap-1.5 text-gray-500 hover:text-gray-300
-                       text-xs transition-colors"
+            style={{
+              backgroundColor: '#7c3aed',
+              color: 'white',
+              fontWeight: 500,
+              fontSize: '14px',
+              padding: '8px 16px',
+              borderRadius: '8px',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'background 0.15s ease',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#6d28d9' }}
+            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#7c3aed' }}
           >
-            <Upload className="w-3.5 h-3.5" />
-            <span>Upload</span>
+            Add Knowledge
           </button>
 
           {/* Clear chat */}
