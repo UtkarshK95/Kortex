@@ -1,4 +1,21 @@
 import { useState, useRef } from 'react'
+import * as pdfjsLib from 'pdfjs-dist'
+
+// pdfjs v5 worker — resolved by Vite at build time
+pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.mjs',
+  import.meta.url,
+).href
+
+function cleanMarkdown(text: string): string {
+  return text
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/\*{1,3}([^*]+)\*{1,3}/g, '$1')
+    .replace(/^---+$/gm, '')
+    .replace(/^\*\s+/gm, '• ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+}
 
 interface UploadPanelProps {
   onClose: () => void
@@ -36,10 +53,6 @@ export default function UploadPanel({
 
     if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
       try {
-        const pdfjsLib = await import('pdfjs-dist')
-        pdfjsLib.GlobalWorkerOptions.workerSrc =
-          `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`
-
         const arrayBuffer = await file.arrayBuffer()
         const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise
 
@@ -52,7 +65,15 @@ export default function UploadPanel({
             .join(' ')
           fullText += pageText + '\n\n'
         }
-        setContent(fullText.trim())
+
+        const extracted = fullText.trim()
+        if (!extracted) {
+          setStatus('error')
+          setErrorMessage('This PDF appears to be scanned or image-only — no text could be extracted. Try a text-based PDF or paste the content manually.')
+          setUploadedFile(null)
+          return
+        }
+        setContent(extracted)
       } catch (err) {
         setStatus('error')
         setErrorMessage('Failed to extract PDF text. Try a text file instead.')
@@ -81,7 +102,7 @@ export default function UploadPanel({
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             title: title.trim(),
-            content: content.trim(),
+            content: cleanMarkdown(content),
             category: category.trim() || 'User Upload',
             author: author.trim() || 'Manual Upload',
             uploaded_at: new Date().toISOString(),

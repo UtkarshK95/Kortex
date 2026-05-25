@@ -57,6 +57,7 @@ def get_sources(chunks: list[dict]) -> list[dict]:
                     "category": chunk.get("category", ""),
                     "author": chunk.get("author", ""),
                     "excerpt": chunk.get("excerpt", ""),
+                    "content": chunk.get("content", chunk.get("chunk_text", "")),
                 }
             )
     return sources

@@ -15,6 +15,7 @@ const categoryColors: Record<string, string> = {
 
 export default function SourceCard({ source }: SourceCardProps) {
   const [open, setOpen] = useState(false)
+  const bodyText = source.content || source.excerpt || ''
   const colorClass =
     categoryColors[source.category] || 'bg-gray-500/10 text-gray-400 border-gray-500/20'
 
@@ -177,8 +178,9 @@ export default function SourceCard({ source }: SourceCardProps) {
               style={{
                 overflowY: 'auto',
                 flex: 1,
-                paddingRight: '4px',
+                maxHeight: '300px',
                 padding: '0 24px 24px 24px',
+                paddingRight: '4px',
               }}
             >
               <p
@@ -189,7 +191,7 @@ export default function SourceCard({ source }: SourceCardProps) {
                   margin: 0,
                 }}
               >
-                {source.excerpt}
+                {bodyText}
               </p>
             </div>
           </div>

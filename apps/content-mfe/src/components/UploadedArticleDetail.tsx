@@ -1,5 +1,15 @@
 import { useUploadedDocs } from '../hooks/useUploadedDocs'
 
+function cleanMarkdown(text: string): string {
+  return text
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/\*{1,3}([^*]+)\*{1,3}/g, '$1')
+    .replace(/^---+$/gm, '')
+    .replace(/^\*\s+/gm, '• ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+}
+
 interface UploadedArticleDetailProps {
   slug: string
   onBack: () => void
@@ -28,7 +38,19 @@ export default function UploadedArticleDetail({ slug, onBack }: UploadedArticleD
     )
   }
 
-  const bodyLines = (doc.content || '').split('\n').filter((l) => l.trim())
+  const displayTitle = doc.title
+    .replace(/[-_]/g, ' ')
+    .replace(/\b\w/g, (c) => c.toUpperCase())
+
+  const sentences = cleanMarkdown(doc.content || '')
+    .split('. ')
+    .map((s) => s.trim())
+    .filter(Boolean)
+  const paragraphs: string[] = []
+  for (let i = 0; i < sentences.length; i += 3) {
+    const chunk = sentences.slice(i, i + 3).join('. ')
+    paragraphs.push(chunk.endsWith('.') ? chunk : chunk + '.')
+  }
 
   return (
     <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
@@ -53,14 +75,8 @@ export default function UploadedArticleDetail({ slug, onBack }: UploadedArticleD
           </div>
 
           <h1 className="text-4xl font-bold text-white leading-tight">
-            {doc.title}
+            {displayTitle}
           </h1>
-
-          {doc.excerpt && (
-            <p className="text-gray-400 text-lg leading-relaxed">
-              {doc.excerpt}
-            </p>
-          )}
 
           <div
             className="flex items-center gap-2 pb-6"
@@ -101,11 +117,15 @@ export default function UploadedArticleDetail({ slug, onBack }: UploadedArticleD
         </div>
 
         {/* Body */}
-        <div className="max-w-3xl space-y-6">
-          {bodyLines.length > 0 ? (
-            bodyLines.map((line, index) => (
-              <p key={index} className="text-gray-300 text-base leading-7">
-                {line}
+        <div className="max-w-3xl">
+          {paragraphs.length > 0 ? (
+            paragraphs.map((para, index) => (
+              <p
+                key={index}
+                className="text-gray-300 text-base leading-7"
+                style={{ marginBottom: '16px' }}
+              >
+                {para}
               </p>
             ))
           ) : (

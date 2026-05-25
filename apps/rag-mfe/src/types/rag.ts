@@ -4,6 +4,7 @@ export interface Source {
   category: string
   author: string
   excerpt: string
+  content?: string
 }
 
 export interface Message {
