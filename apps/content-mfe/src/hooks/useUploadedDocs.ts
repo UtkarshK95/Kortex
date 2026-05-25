@@ -5,6 +5,7 @@ export interface UploadedDoc {
   category: string
   author: string
   excerpt: string
+  content: string
   source: string
   uploaded_at: string
 }

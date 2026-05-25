@@ -141,6 +141,7 @@ async def ingest_document(request: DocumentIngestRequest):
                 if len(request.content) > 200
                 else request.content
             ),
+            "content": request.content,
             "publishedAt": request.uploaded_at,
             "source": request.source,
         }
@@ -217,27 +218,56 @@ async def list_documents():
                 break
             offset = next_offset
 
-        seen: dict[str, dict] = {}
+        # Group all chunks by title for uploaded docs
+        chunks_by_title: dict[str, list[dict]] = {}
+        meta_by_title: dict[str, dict] = {}
         for point in all_points:
             payload = point.payload or {}
             article_id = payload.get("article_id", "")
             source = payload.get("source", "")
-            # Only surface user-uploaded documents
             if not (article_id.startswith("dynamic-") or source == "dynamic"):
                 continue
             title = payload.get("title", "")
-            if not title or title in seen:
+            if not title:
                 continue
-            seen[title] = {
-                "title": title,
-                "category": payload.get("category", "User Upload"),
-                "author": payload.get("author", "Manual Upload"),
-                "excerpt": payload.get("excerpt", ""),
-                "source": "Manual Upload",
-                "uploaded_at": payload.get("published_at", ""),
-            }
+            if title not in meta_by_title:
+                meta_by_title[title] = {
+                    "title": title,
+                    "category": payload.get("category", "User Upload"),
+                    "author": payload.get("author", "Manual Upload"),
+                    "excerpt": payload.get("excerpt", ""),
+                    "source": "Manual Upload",
+                    "uploaded_at": payload.get("published_at", ""),
+                    # Stored directly on newer ingestions
+                    "_content": payload.get("content", ""),
+                }
+                chunks_by_title[title] = []
+            chunks_by_title[title].append(payload)
 
-        return list(seen.values())
+        results = []
+        for title, meta in meta_by_title.items():
+            stored_content = meta.pop("_content", "")
+            if stored_content:
+                content = stored_content
+            else:
+                # Reconstruct from sorted overlapping chunks for older data
+                chunks = sorted(
+                    chunks_by_title[title],
+                    key=lambda x: x.get("chunk_index", 0),
+                )
+                parts = []
+                for i, chunk in enumerate(chunks):
+                    text = chunk.get("chunk_text", "")
+                    if i == 0:
+                        parts.append(text)
+                    else:
+                        words = text.split()
+                        parts.append(" ".join(words[settings.CHUNK_OVERLAP:]))
+                content = " ".join(parts)
+            meta["content"] = content
+            results.append(meta)
+
+        return results
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to list documents: {str(e)}")
 

@@ -97,6 +97,7 @@ def ingest_article(article: dict, article_text: str) -> int:
                     "category": article.get("category", ""),
                     "author": article.get("author", ""),
                     "excerpt": article.get("excerpt", ""),
+                    "content": article.get("content", ""),
                     "chunk_index": i,
                     "chunk_text": chunk,
                     "published_at": article.get("publishedAt", ""),

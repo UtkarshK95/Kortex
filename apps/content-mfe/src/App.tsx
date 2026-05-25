@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import ArticleList from './components/ArticleList'
 import ArticleDetail from './components/ArticleDetail'
+import UploadedArticleDetail from './components/UploadedArticleDetail'
 import { useSanityArticles } from './hooks/useSanityArticles'
 import { SanityArticle } from './types/sanity'
 
@@ -48,6 +49,7 @@ function ErrorState({ message }: { message: string }) {
 export default function App() {
   const { articles, categories, loading, error } = useSanityArticles()
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null)
+  const [selectedUploadedSlug, setSelectedUploadedSlug] = useState<string | null>(null)
 
   const selectedArticle: SanityArticle | null = selectedSlug
     ? articles.find((a) => a.slug.current === selectedSlug) ?? null
@@ -63,11 +65,17 @@ export default function App() {
           article={selectedArticle}
           onBack={() => setSelectedSlug(null)}
         />
+      ) : selectedUploadedSlug ? (
+        <UploadedArticleDetail
+          slug={selectedUploadedSlug}
+          onBack={() => setSelectedUploadedSlug(null)}
+        />
       ) : (
         <ArticleList
           articles={articles}
           categories={categories}
           onSelectArticle={setSelectedSlug}
+          onSelectUploadedDoc={setSelectedUploadedSlug}
         />
       )}
     </div>
