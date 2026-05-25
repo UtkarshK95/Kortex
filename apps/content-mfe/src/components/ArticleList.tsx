@@ -1,11 +1,10 @@
 import ArticleCard from './ArticleCard'
-import { SanityArticle, SanityCategory } from '../types/sanity'
+import { SanityArticle } from '../types/sanity'
 import { useUploadedDocs, UploadedDoc } from '../hooks/useUploadedDocs'
 import { useState } from 'react'
 
 interface ArticleListProps {
   articles: SanityArticle[]
-  categories: SanityCategory[]
   onSelectArticle: (slug: string) => void
   onSelectUploadedDoc: (slug: string) => void
 }
@@ -34,25 +33,29 @@ function toArticleCardShape(doc: UploadedDoc): SanityArticle {
 
 export default function ArticleList({
   articles,
-  categories,
   onSelectArticle,
   onSelectUploadedDoc,
 }: ArticleListProps) {
-  const [activeCategory, setActiveCategory] = useState('all')
+  const [activeCategory, setActiveCategory] = useState('All')
   const { docs: uploadedDocs } = useUploadedDocs()
 
-  const allCategory: SanityCategory = {
-    _id: 'all',
-    name: 'All',
-    slug: { current: 'all' },
-  }
-
-  const allCategories = [allCategory, ...categories]
+  const allCategories = [
+    'All',
+    ...new Set([
+      ...articles.map((a) => a.category?.name?.trim()).filter(Boolean) as string[],
+      ...uploadedDocs.map((d) => d.category?.trim()).filter(Boolean) as string[],
+    ]),
+  ]
 
   const filtered =
-    activeCategory === 'all'
+    activeCategory === 'All'
       ? articles
-      : articles.filter((a) => a.category?.slug?.current === activeCategory)
+      : articles.filter((a) => a.category?.name?.trim() === activeCategory)
+
+  const filteredUploads =
+    activeCategory === 'All'
+      ? uploadedDocs
+      : uploadedDocs.filter((d) => d.category?.trim() === activeCategory)
 
   return (
     <div className="px-8 py-10 max-w-7xl mx-auto">
@@ -79,16 +82,16 @@ export default function ArticleList({
       <div className="flex flex-wrap gap-2 mb-8">
         {allCategories.map((cat) => (
           <button
-            key={cat._id}
-            onClick={() => setActiveCategory(cat.slug.current)}
+            key={cat}
+            onClick={() => setActiveCategory(cat)}
             className={`px-4 py-2 rounded-lg text-sm font-medium
                         transition-all duration-200 ${
-                          activeCategory === cat.slug.current
+                          activeCategory === cat
                             ? 'bg-violet-600 text-white'
                             : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'
                         }`}
           >
-            {cat.name}
+            {cat}
           </button>
         ))}
       </div>
@@ -111,7 +114,7 @@ export default function ArticleList({
       )}
 
       {/* Uploaded Documents */}
-      {uploadedDocs.length > 0 && (
+      {filteredUploads.length > 0 && (
         <div style={{ marginTop: '64px' }}>
           <div
             className="mb-px h-px"
@@ -129,7 +132,7 @@ export default function ArticleList({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {uploadedDocs.map((doc) => {
+            {filteredUploads.map((doc) => {
               const slug = doc.title.toLowerCase().replace(/\s+/g, '-')
               return (
                 <ArticleCard

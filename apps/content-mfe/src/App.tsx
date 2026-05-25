@@ -47,7 +47,7 @@ function ErrorState({ message }: { message: string }) {
 }
 
 export default function App() {
-  const { articles, categories, loading, error } = useSanityArticles()
+  const { articles, loading, error } = useSanityArticles()
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null)
   const [selectedUploadedSlug, setSelectedUploadedSlug] = useState<string | null>(null)
 
@@ -73,7 +73,6 @@ export default function App() {
       ) : (
         <ArticleList
           articles={articles}
-          categories={categories}
           onSelectArticle={setSelectedSlug}
           onSelectUploadedDoc={setSelectedUploadedSlug}
         />
