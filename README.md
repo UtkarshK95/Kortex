@@ -72,7 +72,7 @@ No hallucinations. No retraining required.
               │   Webhook on publish│    │   LangChain pipeline    │
               └─────────────────────┘    └──────┬────────┬─────────┘
                                                 │        │
-                                   ┌────────────▼─┐  ┌──▼─────────────┐
+                                   ┌────────────▼─┐  ┌───▼────────────┐
                                    │ Qdrant Cloud │  │  Gemini / Groq │
                                    │ kortex_know..│  │  Embed + LLM   │
                                    │ 3072-dim vec │  │  Provider swap │
